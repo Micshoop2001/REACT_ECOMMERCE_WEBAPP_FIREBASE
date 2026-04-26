@@ -18,6 +18,10 @@ export default function Cart() {
   const [message, setMessage] = useState("");
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const userName =
+    auth.currentUser?.displayName ??
+    auth.currentUser?.email?.split("@")[0] ??
+    "there";
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -34,7 +38,7 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <div>
-        <h2>Your cart is empty.</h2>
+        <h2>{userName}, your cart is empty.</h2>
         {orders.length > 0 && (
           <div>
             <h3>Past Orders</h3>
@@ -117,7 +121,7 @@ export default function Cart() {
 
   return (
     <div>
-      <h2>Your Cart</h2>
+      <h2>{userName}, your cart</h2>
       <p>Total items: {totalItems}</p>
       <p>Total price: ${totalPrice}</p>
 
