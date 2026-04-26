@@ -1,9 +1,18 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import type { RootState } from "../store";
-import { auth } from "../firebase/firebaseConfig";
+import { auth, db } from "../firebase/firebaseConfig";
 import { fetchOrdersByUser, createOrder } from "../api/Orders";
 import type { OrderDto } from "../api/Orders";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
 
 import {
   removeFromCart,
@@ -18,21 +27,44 @@ export default function Cart() {
   const [message, setMessage] = useState("");
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const userName =
-    auth.currentUser?.displayName ??
-    auth.currentUser?.email?.split("@")[0] ??
-    "there";
+    profileName ?? auth.currentUser?.email?.split("@")[0] ?? "there";
 
   useEffect(() => {
-    const loadOrders = async () => {
+    const loadCartData = async () => {
       const user = auth.currentUser;
       if (!user) return;
 
       const data = await fetchOrdersByUser(user.uid);
       setOrders(data);
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as { name?: string };
+        if (userData.name?.trim()) {
+          setProfileName(userData.name.trim());
+          return;
+        }
+      }
+
+      if (user.email) {
+        const byEmail = query(
+          collection(db, "users"),
+          where("email", "==", user.email),
+          limit(1),
+        );
+        const emailSnapshot = await getDocs(byEmail);
+        const emailMatch = emailSnapshot.docs[0]?.data() as
+          | { name?: string }
+          | undefined;
+        if (emailMatch?.name?.trim()) {
+          setProfileName(emailMatch.name.trim());
+        }
+      }
     };
 
-    loadOrders();
+    loadCartData();
   }, []);
 
   if (items.length === 0) {
