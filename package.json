@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emnapi/core": "^1.10.0",
+    "@emnapi/runtime": "^1.10.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@tanstack/react-query": "^5.99.0",
     "bootstrap": "^5.3.8",
