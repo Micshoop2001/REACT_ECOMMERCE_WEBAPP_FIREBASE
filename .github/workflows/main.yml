@@ -47,6 +47,9 @@ jobs:
       - name: Install Jest
         run: npm install --save-dev jest
 
+      - name: Fix Jest permissions
+        run: chmod +x node_modules/.bin/jest
+
       - name: Run tests
         run: npx jest --watchAll=false --ci --passWithNoTests
   deploy:
