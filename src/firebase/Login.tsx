@@ -1,7 +1,7 @@
 // Login.tsx
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
 const Login = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
